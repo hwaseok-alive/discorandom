@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>레바숄 자판기 - Disco Elysium Style</title>
+    <style>
+        /* 기본 스타일 및 디스코 엘리시움 풍 테마 */
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #d17a22;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px #000;
+        }
+
+        /* 자판기 영역 */
+        .vending-machine {
+            font-size: 100px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 15px rgba(209, 122, 34, 0.5));
+            transition: transform 0.1s;
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            50% { transform: translate(-1px, 2px) rotate(1deg); }
+            100% { transform: translate(1px, 1px) rotate(0deg); }
+        }
+
+        /* 결과 창 */
+        #display {
+            width: 80%;
+            max-width: 500px;
+            height: 100px;
+            background: #222;
+            border: 2px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            box-shadow: inset 0 0 10px #000;
+            color: #8ed6ff;
+        }
+
+        /* 버튼 그룹 */
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        button {
+            background: #333;
+            color: #fff;
+            border: 1px solid #d17a22;
+            padding: 15px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #d17a22;
+            color: #000;
+            box-shadow: 0 0 10px #d17a22;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .random-btn {
+            grid-column: span 1;
+            background: #4a5d4e;
+            border-color: #8fbc8f;
+        }
+
+        .random-btn:hover {
+            background: #8fbc8f;
+        }
+
+        /* 하단 장식 */
+        .footer {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MARTINETTI VENDING</h1>
+
+    <!-- 자판기 아이콘 (이모티콘) -->
+    <div class="vending-machine" id="machine">🎰</div>
+
+    <!-- 결과 메시지 창 -->
+    <div id="display">동전을 넣고 버튼을 누르십시오.</div>
+
+    <!-- 버튼들 -->
+    <div class="button-container">
+        <button onclick="drawItem(3)">3 레알</button>
+        <button onclick="drawItem(7)">7 레알</button>
+        <button onclick="drawItem(10)">10 레알</button>
+        <button onclick="drawItem(30)">30 레알</button>
+        <button class="random-btn" onclick="drawItem('random')">랜덤 물품</button>
+    </div>
+
+    <div class="footer">지나친 약물 사용은 건강(과 정신력)에 해롭습니다.</div>
+
+    <script>
+        // 아이템 데이터베이스
+        const items = {
+            3: ["은방울꽃 한 송이", "마늘빵 세 조각", "펜 뚜껑", "껌 한 조각", "편지지 한 세트"],
+            7: ["작은 꽃 한 다발", "스피드", "오렌지 주스 한 병", "깨진 안경알"],
+            10: ["드루아민", "담배 한 갑", "녹테인", "앵무새에 관하여 서적", "딕 멀렌 시리즈 1", "딕 멀렌 시리즈 2", "딕 멀렌 시리즈 3", "딕 멀렌 시리즈 4"],
+            30: ["하얀 체크 무늬 손수건 한 장", "알이 큰 선글라스", "하나만 남은 슬리퍼", "오른쪽만 남은 가죽 신발"],
+            "random": ["무언가의 아쿠아리움 하루 무료 숙박권", "철학 서적", "가로로 긴 스피커(중고)", "파란색 꽃 한 다발"]
+        };
+
+        function drawItem(price) {
+            const display = document.getElementById('display');
+            const machine = document.getElementById('machine');
+            
+            // 자판기 흔들리는 효과
+            machine.classList.remove('shake');
+            void machine.offsetWidth; // 리플로우 강제 발생
+            machine.classList.add('shake');
+
+            // 랜덤하게 아이템 선택
+            const itemList = items[price];
+            const randomIndex = Math.floor(Math.random() * itemList.length);
+            const selectedItem = itemList[randomIndex];
+
+            // 결과 출력 (약간의 딜레이를 주어 뽑는 느낌 강조)
+            display.innerText = "덜컹거리는 소리가 납니다...";
+            
+            setTimeout(() => {
+                display.innerHTML = `<span style="color: #fff;">[ 획득 ]</span><br>${selectedItem}`;
+            }, 500);
+        }
+    </script>
+</body>
+</html>
